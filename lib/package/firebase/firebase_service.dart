@@ -6,14 +6,19 @@ import 'package:firebase_project/domain/model/person_model.dart';
 import 'package:firebase_project/firebase_options.dart';
 import 'package:flutter/foundation.dart';
 
-ValueNotifier<List<PersonModel>> personList = ValueNotifier([]);
-
 class FirebaseService {
-  static late final FirebaseFirestore fdb;
-  final String collectionName = "PersonData";
- 
+  FirebaseService._();
 
-  initialize() async {
+  static final _instance = FirebaseService._();
+
+  factory FirebaseService() => _instance;
+
+  static late final FirebaseFirestore fdb;
+  String collectionName = "PersonData";
+  late final Stream<QuerySnapshot<Map<String, dynamic>>> personStream;
+  ValueNotifier<List<PersonModel>> personList = ValueNotifier([]);
+
+  Future<void> initialize() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -22,7 +27,7 @@ class FirebaseService {
         const Settings(persistenceEnabled: true);
     // firestore database initializing
     fdb = FirebaseFirestore.instance;
-    getAllPersonList();
+    personStream = fdb.collection(collectionName).snapshots();
   }
 
   void addPersonData(PersonModel person) async {
@@ -33,7 +38,7 @@ class FirebaseService {
       final String id = docRef.id;
       log("Insert Data with $id");
     });
-    getAllPersonList();
+    // getAllPersonList();
   }
 
   void getAllPersonList() async {
@@ -57,11 +62,11 @@ class FirebaseService {
     }).onError((e, stack) {
       log("Error is $e", name: "oxdo");
     });
-    getAllPersonList();
+    // getAllPersonList();
   }
 
   void deletePerson(String id) async {
     await fdb.collection(collectionName).doc(id).delete();
-    getAllPersonList();
+    // getAllPersonList();
   }
 }

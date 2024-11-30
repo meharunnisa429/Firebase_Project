@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_project/domain/model/person_model.dart';
 import 'package:firebase_project/model/save_button_mode.dart';
 import 'package:firebase_project/package/firebase/firebase_service.dart';
@@ -16,6 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final _nameFocusNode = FocusNode();
   final _ageFocus = FocusNode();
   SaveButtonMode _saveButtonMode = SaveButtonMode.save;
+  // Initialize person list
+  final List<PersonModel> _personList = [];
   // Only for updating
   PersonModel? _personToUpdate;
   // un focus text fields,  hide keyboard
@@ -107,56 +112,87 @@ class _HomeScreenState extends State<HomeScreen> {
                 _unFocusAllFocusNode();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: _saveButtonMode == SaveButtonMode.save
+                    ? Colors.green
+                    : Colors.blue,
                 foregroundColor: Colors.white,
               ),
-              child: const Text("Save"),
+              child: Text(
+                  _saveButtonMode == SaveButtonMode.save ? "Save" : "Update"),
             ),
             const SizedBox(
               height: 8,
             ),
+            // save or edit buttton
 
-            Expanded(
-              child: ValueListenableBuilder(
-                  valueListenable: personList,
-                  builder: (BuildContext context, List<PersonModel> personModel,
-                      Widget? _) {
-                    return ListView.separated(
-                      itemBuilder: (context, index) {
-                        final person = personModel[index];
-                        return Card(
-                          child: ListTile(
-                            title: Text("Name:- ${person.name}"),
-                            subtitle: Text("Age:-${person.age} "),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    _bringPersonToUpdate(person);
-                                  },
-                                  icon: const Icon(Icons.edit),
-                                ),
-                                IconButton(
-                                  onPressed: () {
+            const SizedBox(
+              height: 8,
+            ),
+            StreamBuilder(
+              stream: FirebaseService().personStream,
+              builder: (context, snapShot) {
+                if (snapShot.connectionState == ConnectionState.waiting) {
+                  log("in waiting");
+                }
+                if (snapShot.hasError) {
+                  log("Error");
+                }
+                if (snapShot.hasData) {
+                  log("Data");
+                  final QuerySnapshot<Map<String, dynamic>>? querySnapshot =
+                      snapShot.data;
+                  if (querySnapshot != null) {
+                    _personList.clear();
+                    for (var documentSnapshot in querySnapshot.docs) {
+                      final person = PersonModel.fromJson(
+                          documentSnapshot.data(), documentSnapshot.id);
+                      _personList.add(person);
+                    }
+                  }
+                }
+                log("Other");
+                return Expanded(
+                  child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      final person = _personList[index];
+
+                      return Card(
+                        child: ListTile(
+                          title: Text("Name:- ${person.name}"),
+                          subtitle: Text("Age:- ${person.age}"),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  // take data to update
+                                  _bringPersonToUpdate(person);
+                                },
+                                icon: const Icon(Icons.edit),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  if (person.id != null) {
                                     FirebaseService()
                                         .deletePerson(person.id.toString());
-                                  },
-                                  color: Colors.red,
-                                  icon: const Icon(Icons.delete),
-                                ),
-                              ],
-                            ),
+                                  }
+                                },
+                                color: Colors.red,
+                                icon: const Icon(Icons.delete),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider();
-                      },
-                      itemCount: personModel.length,
-                    );
-                  }),
-            )
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
+                    itemCount: _personList.length,
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
