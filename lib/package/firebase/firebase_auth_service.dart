@@ -30,24 +30,37 @@ class FirebaseAuthService {
   }
 
   Future<AuthModel> getUserInfo() async {
-    AuthModel usermodel = const AuthModel();
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       log("inside user");
-      usermodel = AuthModel(
-          phoneNumber: user.phoneNumber,
+      AuthModel usermodel = AuthModel(
+          userName: "",
+          password: "",
           photoURL: user.photoURL,
-          email: user.email);
+          email: user.email!);
+      return usermodel;
+    } else {
+      throw "User Not Found";
     }
-
-    return usermodel;
   }
 
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
   }
 
-  Future<void> singInWithEmailAndPass({
+  Future<void> createAccountWithEmailAndPass({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> signInWithEmailAndPass({
     required String email,
     required String password,
   }) async {

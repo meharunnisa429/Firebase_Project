@@ -1,8 +1,6 @@
 import 'dart:developer';
-
 import 'package:firebase_project/domain/person/person_model/person_model.dart';
 import 'package:firebase_project/model/save_button_mode.dart';
-
 import 'package:firebase_project/presentation/bloc/person/person_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,10 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    context.read<PersonBloc>().add(PersonGetAll());
     // TODO: implement initState
     _nameController = TextEditingController();
     _ageController = TextEditingController();
-    context.read<PersonBloc>().add(PersonGetAll());
+
     super.initState();
   }
 
@@ -99,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 8,
             ),
 
-            // save or edit buttton
+            // save or edit button
             ElevatedButton(
               onPressed: () {
                 if (_saveButtonMode == SaveButtonMode.save) {

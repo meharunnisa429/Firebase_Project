@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:firebase_project/domain/auth/auth_model/auth_model.dart';
+
 import 'package:firebase_project/presentation/bloc/auth/auth_bloc.dart';
 import 'package:firebase_project/presentation/screen/user/user_info_screen.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // email
                   TextFormField(
                     controller: _emailController,
@@ -80,7 +80,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       suffixIcon: IconButton(
                         onPressed: () {
                           _obscurepassword = !_obscurepassword;
-                       
                         },
                         icon: Icon(
                           _obscurepassword
@@ -105,32 +104,86 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 16,
                   ),
 
-                  MaterialButton(
-                    onPressed: () async {
-                      FocusScope.of(context).unfocus();
-                      if (_fomKey.currentState!.validate()) {
-                        final email = _emailController.text.trim();
-                        final password = _passwordController.text.trim();
-                        try {} catch (e) {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(e.toString())));
-                          });
-                        }
+                  BlocListener<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthSuccess) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UserInfoScreen()));
                       }
                     },
-                    elevation: 6,
-                    minWidth: double.infinity,
-                    color: Colors.amber,
-                    textColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    child: const Text(
-                      "Sign in",
-                      style: TextStyle(fontSize: 16),
+                    child: MaterialButton(
+                      onPressed: () async {
+                        FocusScope.of(context).unfocus();
+                        if (_fomKey.currentState!.validate()) {
+                          final email = _emailController.text.trim();
+                          final password = _passwordController.text.trim();
+                          try {
+                            context.read<AuthBloc>().add(AuthSigninWithEmail(
+                                email: email, password: password));
+                          } catch (e) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(e.toString())));
+                            });
+                          }
+                        }
+                      },
+                      elevation: 6,
+                      minWidth: double.infinity,
+                      color: Colors.amber,
+                      textColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      child: const Text(
+                        "Sign in",
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
                   ),
 
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  BlocListener<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthSuccess) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UserInfoScreen()));
+                      }
+                    },
+                    child: MaterialButton(
+                      onPressed: () async {
+                        FocusScope.of(context).unfocus();
+                        if (_fomKey.currentState!.validate()) {
+                          final email = _emailController.text.trim();
+                          final password = _passwordController.text.trim();
+                          try {
+                            context.read<AuthBloc>().add(AuthCreateAccount(
+                                email: email, password: password));
+                          } catch (e) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(e.toString())));
+                            });
+                          }
+                        }
+                      },
+                      elevation: 6,
+                      minWidth: double.infinity,
+                      color: Colors.amber,
+                      textColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      child: const Text(
+                        "Sign up",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     height: 8,
                   ),
@@ -141,9 +194,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   BlocConsumer<AuthBloc, AuthState>(
                     listener: (context, state) {
                       if (state is AuthSuccess) {
-                        // AuthModel model = state.authModel;
-                        // log(model.toString(), name: "User Details");
-
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -158,7 +208,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         onPressed: () {
-                          // Todoflutter pub add sign_in_button
                           context.read<AuthBloc>().add(AuthSignin());
                         },
                       );

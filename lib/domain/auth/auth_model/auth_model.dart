@@ -2,34 +2,29 @@
 import 'package:equatable/equatable.dart';
 
 class AuthModel extends Equatable {
-  final String? authorizationCode;
-  final bool? isNewUser;
-  final String? userName;
-  final String? email;
-  final String? phoneNumber;
+  final String userName;
+  final String email;
+  final String password;
   final String? photoURL;
-  const AuthModel({
-    this.authorizationCode,
-    this.isNewUser,
-    this.userName,
-    this.email,
-    this.phoneNumber,
-    this.photoURL,
-  });
+  final AuthenticationType authType;
+  const AuthModel(
+      {required this.userName,
+      required this.email,
+      required this.password,
+      this.photoURL,
+      this.authType = AuthenticationType.google});
 
   @override
   String toString() {
-    return 'AuthModel(authorizationCode: $authorizationCode, isNewUser: $isNewUser, userName: $userName, email: $email, phoneNumber: $phoneNumber, photoURL: $photoURL)';
+    return 'AuthModel(userName: $userName, email: $email, password: $password, photoURL: $photoURL, authType: $authType)';
   }
 
   @override
   // TODO: implement props
-  List<Object?> get props => [
-        authorizationCode,
-        isNewUser,
-        userName,
-        email,
-        phoneNumber,
-        photoURL,
-      ];
+  List<Object?> get props => [userName, email, password, photoURL, authType];
+}
+
+enum AuthenticationType {
+  google,
+  emailAndPass,
 }

@@ -10,13 +10,6 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> signInWithEmailAndPass(
-      {required String email, required String password}) async {
-    await FirebaseAuthService()
-        .singInWithEmailAndPass(email: email, password: password);
-  }
-
-  @override
   Future<AuthModel> getUserInfo() async {
     return await FirebaseAuthService().getUserInfo();
   }
@@ -24,5 +17,19 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> signOut() async {
     await FirebaseAuthService().signOut();
+  }
+
+  @override
+  Future<void> signInWithEmailAndPass(
+      {required String email, required String password}) async {
+    await FirebaseAuthService()
+        .signInWithEmailAndPass(email: email, password: password);
+  }
+
+  @override
+  Future<void> createAccountWithEmailAndPass(
+      {required String email, required String password}) async {
+    await FirebaseAuthService()
+        .createAccountWithEmailAndPass(email: email, password: password);
   }
 }

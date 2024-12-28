@@ -24,4 +24,5 @@ final class AuthSuccess extends AuthState {
 final class AuthError extends AuthState {}
 
 final class AuthSignOutSuccess extends AuthState {}
+
 final class AuthSignOutError extends AuthState {}

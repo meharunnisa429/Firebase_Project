@@ -16,12 +16,12 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
   }
   void _getAll(PersonGetAll event, Emitter<PersonState> emit) async {
     emit(PersonLoading());
-    try {
-      List<PersonModel> personList = await personRepository.getAllPerson();
-      emit(PersonLoaded(personList: personList));
-    } catch (e) {
-      emit(PersonError());
-    }
+    // try {
+    List<PersonModel> personList = await personRepository.getAllPerson();
+    emit(PersonLoaded(personList: personList));
+    // } catch (e) {
+    //   emit(PersonError());
+    // }
   }
 
   void _addNew(PersonAddNew event, Emitter<PersonState> emit) async {

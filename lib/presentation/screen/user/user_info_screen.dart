@@ -1,4 +1,5 @@
 import 'package:firebase_project/presentation/bloc/auth/auth_bloc.dart';
+import 'package:firebase_project/presentation/screen/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,6 +14,14 @@ class UserInfoScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("User info"),
         centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              },
+              icon: const Icon(Icons.home))
+        ],
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -38,13 +47,11 @@ class UserInfoScreen extends StatelessWidget {
                   ),
 
                   // Display name
-                  Text(auth.email!),
+                  Text(auth.email),
                   const SizedBox(
                     height: 20,
                   ),
 
-                  // Display phone number
-                  Text(auth.phoneNumber ?? "Nil"),
                   const SizedBox(
                     height: 20,
                   ),
