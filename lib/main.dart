@@ -1,4 +1,5 @@
 import 'package:firebase_project/package/firebase/firebase_firestore_service.dart';
+import 'package:firebase_project/package/firebase/firebase_notification_service.dart';
 import 'package:firebase_project/presentation/bloc/auth/auth_bloc.dart';
 import 'package:firebase_project/presentation/bloc/person/person_bloc.dart';
 
@@ -10,6 +11,8 @@ import 'injections/di.dart' as di;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FirebaseFirestoreService().initialize();
+  await FirebaseNotificationService().initializeNotification();
+
   di.setup();
   runApp(const MyApp());
 }

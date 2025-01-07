@@ -20,7 +20,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   _signin(AuthSignin event, Emitter<AuthState> emit) async {
     try {
-      log("inside  bloc");
       await authRepository.signInWithGoogle();
       AuthModel userModel = await authRepository.getUserInfo();
 
@@ -29,8 +28,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthError());
     }
   }
-
-  
 
   _signOut(AuthSignOut event, Emitter<AuthState> emit) async {
     try {
@@ -44,10 +41,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   _createAccount(AuthCreateAccount event, Emitter<AuthState> emit) async {
     try {
-      log("inside  bloc");
       await authRepository.createAccountWithEmailAndPass(
           email: event.email, password: event.password);
-  AuthModel userModel = await authRepository.getUserInfo();
+      AuthModel userModel = await authRepository.getUserInfo();
       emit(AuthSuccess(authModel: userModel));
     } catch (e) {
       emit(AuthError());
@@ -56,7 +52,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   _signinWithEmail(AuthSigninWithEmail event, Emitter<AuthState> emit) async {
     try {
-      log("inside  bloc");
       await authRepository.signInWithEmailAndPass(
           email: event.email, password: event.password);
 

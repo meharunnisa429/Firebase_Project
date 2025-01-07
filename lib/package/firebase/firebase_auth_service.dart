@@ -32,7 +32,6 @@ class FirebaseAuthService {
   Future<AuthModel> getUserInfo() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      log("inside user");
       AuthModel usermodel = AuthModel(
           userName: "",
           password: "",

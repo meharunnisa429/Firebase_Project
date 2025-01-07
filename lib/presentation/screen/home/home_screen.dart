@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:firebase_project/domain/person/person_model/person_model.dart';
 import 'package:firebase_project/model/save_button_mode.dart';
 import 'package:firebase_project/presentation/bloc/person/person_bloc.dart';
+import 'package:firebase_project/presentation/screen/notification/notification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -64,6 +65,16 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Firestore"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const NotificationScreen()));
+              },
+              icon: Icon(Icons.notification_add))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
